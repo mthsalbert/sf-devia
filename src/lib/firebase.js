@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,12 +13,38 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
 
-// Set browserLocalPersistence
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error('Error setting persistence:', error);
 });
 
-export const db = getFirestore(app);
+export const db = getFirestore();
+
+export function withAuth(Component) {
+  return function ProtectedPage(props) {
+    const [loading, setLoading] = useState(true);
+    const [authenticated, setAuthenticated] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+      const unsub = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setAuthenticated(true);
+        } else {
+          router.push('/login');
+        }
+        setLoading(false);
+      });
+
+      return () => unsub();
+    }, [router]);
+
+    if (loading) return <p>Carregando...</p>;
+    if (!authenticated) return null;
+
+    return <Component {...props} />;
+  };
+}

@@ -43,7 +43,6 @@ export default function GptChat({ threadId }) {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    console.log('Dados do chat:', data);
     if (data.threadId) setTitle(data.title || '');
   }
 

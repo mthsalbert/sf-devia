@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import Stripe from 'stripe';
-import { verifyAuth } from '../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../src/lib/firebaseAdmin';
 
 if (!getApps().length) {
   initializeApp({

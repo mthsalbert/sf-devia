@@ -1,5 +1,4 @@
-// pages/api/user/[userId].js
-import { verifyAuth } from '../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../src/lib/firebaseAdmin';
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) {
@@ -11,11 +10,11 @@ if (!admin.apps.length) {
 export default async function handler(req, res) {
   const { userId } = req.query;
 
-  await verifyAuth(req)
+  await verifyAuth(req);
 
   try {
-
     const doc = await admin.firestore().collection('users').doc(userId).get();
+
     if (!doc.exists) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }

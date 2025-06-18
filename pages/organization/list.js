@@ -1,57 +1,57 @@
-// pages/chat/list.js
+// pages/organization/list.js
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { auth } from '../../src/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { withAuth } from '../../src/lib/firebase';
 
-function ChatListPage() {
+function OrganizationListPage() {
   const [user, setUser] = useState(null);
-  const [chats, setChats] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
         setUser(u);
-        await loadChats(u);
+        await loadOrganizations(u);
       }
     });
     return () => unsub();
   }, []);
 
-  async function loadChats(user) {
+  async function loadOrganizations(user) {
     const token = await user.getIdToken();
-    const res = await fetch('/api/chat/thread/list', {
+    const res = await fetch('/api/organization/list', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    const data = await res.json();
-    setChats(data.chats || []);
+    const response = await res.json();
+    setOrganizations(response.data || []);
   }
 
-  async function createNewChat() {
+  async function createNewOrganization() {
     if (!user) return;
     const token = await user.getIdToken();
-    const res = await fetch('/api/chat/thread/create', {
+    const res = await fetch('/api/organization/create', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
     const data = await res.json();
-    if (data.chatId) {
-      router.push(`/chat/${data.chatId}`);
+    if (data.organizationId) {
+      router.push(`/organization/${data.organizationId}`);
     }
   }
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>Seus chats</h1>
-      <button onClick={createNewChat}>+ Novo Chat</button>
+      <h1>Suas organizações</h1>
+      <button onClick={createNewOrganization}>+ Nova Organização</button>
       <ul style={{ marginTop: '1rem' }}>
-        {chats.map(chat => (
-          <li key={chat.id}>
-            <a href={`/chat/${chat.id}`}>{chat.title || chat.threadId}</a>
+        {organizations.map(org => (
+          <li key={org.id}>
+            <a href={`/organization/${org.id}`}>{org.name || org.id}</a>
           </li>
         ))}
       </ul>
@@ -59,4 +59,4 @@ function ChatListPage() {
   );
 }
 
-export default withAuth(ChatListPage);
+export default withAuth(OrganizationListPage);

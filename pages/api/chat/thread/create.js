@@ -2,7 +2,7 @@
 import OpenAI from 'openai';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { verifyAuth } from '../../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../../src/lib/firebaseAdmin';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 if (!getApps().length) {

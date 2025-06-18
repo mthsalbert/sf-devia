@@ -29,7 +29,18 @@ export default function Home() {
       <main style={{ padding: '2rem' }}>
         <h1>Bem-vindo, {user?.displayName}!</h1>
         <p>Esta é a tela principal do chat.</p>
-        <a href="/chat/list" style={{ color: 'blue', textDecoration: 'underline' }}>Ir para chats</a>
+        <ul>
+          {/* <li>
+            <a href="/chat/list" style={{ color: 'blue', textDecoration: 'underline' }}>
+              Ir para chats
+            </a>
+          </li> */}
+          <li>
+            <a href="/organization/list" style={{ color: 'blue', textDecoration: 'underline' }}>
+              Ir para organizações
+            </a>
+          </li>
+        </ul>
       </main>
     </>
   );

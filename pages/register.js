@@ -32,8 +32,7 @@ export default function RegisterPage() {
 
       let userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-      const uid = auth.currentUser?.uid;
-      console.log('User ID do auth:', uid);
+      /* const uid = auth.currentUser?.uid;
       const checkoutRes = await fetch('/api/stripe/checkout-session', {
         method: 'POST',
         headers: { 
@@ -46,7 +45,8 @@ export default function RegisterPage() {
       const checkoutData = await checkoutRes.json();
       if (!checkoutRes.ok) throw new Error(checkoutData.error || 'Erro ao iniciar checkout');
 
-      window.location.href = checkoutData.url;
+      window.location.href = checkoutData.url; */
+      window.location.href = '/'
     } catch (err) {
       console.error(err);
       setError(err.message);

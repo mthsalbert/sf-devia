@@ -1,7 +1,7 @@
 // pages/api/chat/thread/list.js
 import { getFirestore, collection, getDocs } from 'firebase-admin/firestore';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { verifyAuth } from '../../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../../src/lib/firebaseAdmin';
 
 if (!getApps().length) {
   initializeApp({

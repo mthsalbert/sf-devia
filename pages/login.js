@@ -24,7 +24,6 @@ export default function Login() {
     setError(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login bem-sucedido!');
       router.push('/');
     } catch (err) {
       console.error('Erro no login:', err);

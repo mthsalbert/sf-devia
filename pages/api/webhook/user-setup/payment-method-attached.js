@@ -25,7 +25,6 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Método não permitido');
-console.log('Webhook recebido:', req.headers);
   const rawBody = await buffer(req);
   const sig = req.headers['stripe-signature'];
   let event;
@@ -48,7 +47,6 @@ console.log('Webhook recebido:', req.headers);
     if (!snapshot.empty) {
       const userDoc = snapshot.docs[0];
       await userDoc.ref.update({ setupComplete: true });
-      console.log(`Usuário ${userDoc.id} atualizado como setup completo.`);
     }
   }
 

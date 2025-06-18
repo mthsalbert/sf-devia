@@ -1,7 +1,7 @@
 // pages/api/chat/thread/messages.js
 import OpenAI from 'openai';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { verifyAuth } from '../../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../../src/lib/firebaseAdmin';
 
 if (!getApps().length) {
   initializeApp({

@@ -3,7 +3,7 @@ import { getFirestore, getDoc, deleteDoc } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import OpenAI from 'openai';
-import { verifyAuth } from '../../../../src/lib/verifyAuth';
+import { verifyAuth } from '../../../../src/lib/firebaseAdmin';
 
 if (!getApps().length) {
   initializeApp({

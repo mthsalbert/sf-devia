@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import GptChat from '../../components/GptChat';
 import { auth } from '../../src/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { withAuth } from '../../src/lib/withAuth';
+import { withAuth } from '../../src/lib/firebase';
 
 function ChatByIdPage() {
   const router = useRouter();
