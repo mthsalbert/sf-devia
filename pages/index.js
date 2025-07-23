@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../src/lib/firebase';
-import Navbar from '../components/Navbar';
+import Layout from '../components/Layout';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,7 @@ export default function Home() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        router.push('/organization/list');
       } else {
         router.push('/login');
       }
@@ -25,8 +26,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <main style={{ padding: '2rem' }}>
+      <Layout>
         <h1>Bem-vindo, {user?.displayName}!</h1>
         <p>Esta é a tela principal do chat.</p>
         <ul>
@@ -41,7 +41,7 @@ export default function Home() {
             </a>
           </li>
         </ul>
-      </main>
+      </Layout>
     </>
   );
 }

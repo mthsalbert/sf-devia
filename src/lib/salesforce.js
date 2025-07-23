@@ -1,9 +1,7 @@
 import { Connection } from "jsforce";
-import { verifyAuth, db } from "@/lib/firebaseAdmin";
+import { db } from "@/lib/firebaseAdmin";
 
-export let connByOrgId = async (req) => {
-    let {uid} = await verifyAuth(req);
-    let { organizationId } = JSON.parse(req.body || '{}');
+export let connByOrgId = async ({organizationId, uid}) => {
     const org = (await db
       .collection('users')
       .doc(uid)

@@ -1,19 +1,17 @@
 // components/GptChat.js
 import { useEffect, useState, useRef } from 'react';
 import { auth, db } from '../src/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
-const ASSISTANT_ID = process.env.NEXT_PUBLIC_OPENAI_ASSISTANT_ID;
-
-export default function GptChat({ threadId }) {
+export default function GptChat({ threadId: initialThreadId = null, assistantId }) {
   const [user, setUser] = useState(null);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState('');
-  const threadRef = useRef(threadId);
+  const threadRef = useRef(initialThreadId);
   const router = useRouter();
   const { chatid } = router.query;
 
@@ -21,7 +19,6 @@ export default function GptChat({ threadId }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       if (u) {
         setUser(u);
-        threadRef.current = threadId;
         await setDoc(doc(db, 'users', u.uid), {
           uid: u.uid,
           email: u.email,
@@ -29,12 +26,39 @@ export default function GptChat({ threadId }) {
           createdAt: new Date().toISOString(),
           lastLoginAt: new Date().toISOString()
         }, { merge: true });
+
+        if (!threadRef.current) {
+          await createThread(u);
+        }
+
         await loadTitle(u);
         await loadMessagesFromBackend(u);
       }
     });
     return () => unsub();
-  }, [threadId]);
+  }, [initialThreadId]);
+
+  async function createThread(user) {
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch('/api/chat/thread/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ assistantId })
+      });
+
+      const data = await res.json();
+      if (data.threadId) {
+        threadRef.current = data.threadId;
+        router.replace(`/chat/${data.chatId}`); // opcional: redirecionar
+      }
+    } catch (err) {
+      console.error('Erro ao criar thread:', err);
+    }
+  }
 
   async function loadTitle(user) {
     if (!chatid) return;
@@ -58,6 +82,39 @@ export default function GptChat({ threadId }) {
     } catch (err) {
       console.error('Erro ao carregar mensagens:', err);
     }
+  }
+
+  async function handleSend() {
+    if (!input.trim()) return;
+    setLoading(true);
+
+    try {
+      const token = await user.getIdToken();
+
+      const res = await fetch('/api/chat/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          threadId: threadRef.current,
+          input,
+          assistantId
+        })
+      });
+
+      const data = await res.json();
+      if (data.reply) {
+        setMessages(prev => [...prev, { role: 'user', content: input }, { role: 'assistant', content: data.reply }]);
+      }
+
+      setInput('');
+    } catch (err) {
+      console.error('Erro ao enviar mensagem:', err);
+    }
+
+    setLoading(false);
   }
 
   async function renameChat() {
@@ -102,39 +159,6 @@ export default function GptChat({ threadId }) {
     }
   }
 
-  async function handleSend() {
-    if (!input.trim()) return;
-    setLoading(true);
-
-    try {
-      const token = await user.getIdToken();
-
-      const res = await fetch('/api/chat/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          threadId: threadRef.current,
-          input,
-          assistantId: ASSISTANT_ID
-        })
-      });
-
-      const data = await res.json();
-      if (data.reply) {
-        setMessages(prev => [...prev, { role: 'user', content: input }, { role: 'assistant', content: data.reply }]);
-      }
-
-      setInput('');
-    } catch (err) {
-      console.error('Erro ao enviar mensagem:', err);
-    }
-
-    setLoading(false);
-  }
-
   async function handleClearChat() {
     if (!user || !threadRef.current) return;
 
@@ -155,7 +179,6 @@ export default function GptChat({ threadId }) {
       console.error('Erro ao limpar thread:', err);
     }
   }
-
 
   return (
     <div>

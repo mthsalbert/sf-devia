@@ -1,0 +1,22 @@
+.sidebar {
+    height: 100vh;
+    transition-duration: .2s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-menu-list {
+    transition-duration: .2s;
+    width: 28px;
+    overflow-x: hidden;
+    flex-grow: 1;
+    position: absolute;
+    z-index: 5;
+    background: white;
+    top: calc(32px + .25rem);
+}
+
+.sidebar:hover .container-menu-list {
+    width: 50vh;
+}

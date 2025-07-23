@@ -11,7 +11,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{ padding: '1rem', background: '#eee', marginBottom: '2rem' }}>
+    <nav style={{ background: '#fff'}} className='slds-p-vertical--x-small slds-p-horizontal--large'>
       <span style={{ marginRight: '1rem' }}>Chat Portal</span>
       <button onClick={handleLogout}>Sair</button>
     </nav>

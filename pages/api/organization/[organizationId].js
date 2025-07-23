@@ -20,14 +20,14 @@ export default async function handler(req, res) {
       return res.status(200).json({ organization: null });
     }
 
-    const { id, name, instance_url, zipContent } = data;
+    const { salesforce_id, name, instance_url, zipContentName } = data;
 
     return res.status(200).json({
       organization: {
-        id,
+        salesforce_id,
         name,
         instance_url,
-        zipContent
+        zipContentName
       },
     });
   } catch (err) {

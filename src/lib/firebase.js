@@ -3,6 +3,8 @@ import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } 
 import { getFirestore } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,7 +23,7 @@ setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error('Error setting persistence:', error);
 });
 
-export const db = getFirestore();
+export const db = getFirestore(app);
 
 export function withAuth(Component) {
   return function ProtectedPage(props) {
@@ -48,3 +50,5 @@ export function withAuth(Component) {
     return <Component {...props} />;
   };
 }
+
+export const storage = getStorage(app);

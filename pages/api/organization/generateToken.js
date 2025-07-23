@@ -42,9 +42,12 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Organização não encontrada' });
     }
 
+    let salesforce_id = responseBody.id?.split('/').pop()
+    delete responseBody.id
     await ref.set({
         ...responseBody,
-        id: responseBody.id.split('/').pop()
+        salesforce_id,
+        name: responseBody.instance_url.replaceAll('https://', '').split('.').at(0)
     }, { merge: true });
 
     return res.status(200).json({ success: true });
